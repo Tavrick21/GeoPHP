@@ -1,10 +1,10 @@
 <?php
 // Paramètres de connexion à PostgreSQL
-$host = '192.168.56.1'; // Adresse IP de Windows où PostgreSQL est installé
+$host = '10.0.3.15'; // Adresse IP de Windows où PostgreSQL est installé
 $port = '5433';         // Port de PostgreSQL configuré
 $dbname = 'carto_db';   // Nom de la base de données
 $user = 'postgres';     // Nom d'utilisateur PostgreSQL
-$password = 'admin';         // Mot de passe PostgreSQL (remplis si tu as un mot de passe)
+$password = 'postgres';         // Mot de passe PostgreSQL (remplis si tu as un mot de passe)
 
 // DSN pour PDO
 $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;user=$user;password=$password";
