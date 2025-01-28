@@ -1,42 +1,35 @@
 <?php
-require 'geoPHP.inc';
+$host = "10.0.3.15";
+$port = "5433";
+$dbname = "carto_db";
+$user = "postgres";
+$password = "postgres";
 
 // Connexion à PostgreSQL
-$conn = pg_connect("host=192.168.56.1 port=5433 dbname=carto_db user=postgres password=admin");
-
+$conn = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$password");
 if (!$conn) {
-    die("Erreur de connexion à la base de données.");
+    die("Erreur de connexion : " . pg_last_error());
 }
-
-// Requête pour récupérer les données géométriques
-$result = pg_query($conn, "SELECT gid, ST_AsGeoJSON(geom) AS geojson FROM topology.toponymie_services_21_wgs84");
+// Requête pour récupérer les données GeoJSON
+$query = "SELECT ST_AsGeoJSON(geom) AS geojson FROM your_table_name";
+$result = pg_query($conn, $query);
 
 if (!$result) {
-    die("Erreur dans la requête.");
+    die("Erreur dans la requête : " . pg_last_error());
 }
-
-// Récupérer les données
 $features = [];
 while ($row = pg_fetch_assoc($result)) {
-    $geometry = json_decode($row['geojson']);
-    $feature = [
+    $geojson = json_decode($row['geojson'], true);
+    $features[] = [
         "type" => "Feature",
-        "geometry" => $geometry,
-        "properties" => [
-            "gid" => $row['gid']
-        ]
+        "geometry" => $geojson,
+        "properties" => [] // Ajoutez ici les propriétés si nécessaire
     ];
-    $features[] = $feature;
 }
-
-// Créer un GeoJSON
-$geojson = [
+echo json_encode([
     "type" => "FeatureCollection",
     "features" => $features
-];
-
-header('Content-Type: application/json');
-echo json_encode($geojson);
+]);
 
 pg_close($conn);
 ?>
